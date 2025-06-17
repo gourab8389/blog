@@ -1,5 +1,9 @@
 import { sql } from "../utils/db.js";
 import { TryCatch } from "../utils/try-catch.js";
+import axios from "axios";
+// import dotenv from "dotenv";
+
+// dotenv.config();
 
 export const getAllBlogs = TryCatch(async (req, res) => {
   const { searchQuery, category } = req.query;
@@ -35,23 +39,22 @@ export const getAllBlogs = TryCatch(async (req, res) => {
 });
 
 export const getSingleBlog = TryCatch(async (req, res) => {
-        const { id } = req.params;
-        
-        const blog = await sql`
+  const { id } = req.params;
+
+  const blog = await sql`
         SELECT * FROM blogs WHERE id = ${id}
         `;
-        
-        if (blog.length === 0) {
-          res.status(404).json({
-            status: false,
-            message: "Blog not found",
-          });
-          return;
-        }
-        
-        res.json({
-        status: true,
-        message: "Blog fetched successfully",
-        blog: blog[0],
-        });
-})
+
+  const { data } = await axios.get(
+    `${process.env.USER_SERVICE}/api/v1/user/${blog[0].author}`
+  );
+
+  res.json({
+    status: true,
+    message: "Blog fetched successfully",
+    blog: {
+      blog: blog[0],
+      author: data,
+    },
+  });
+});
