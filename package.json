@@ -15,10 +15,12 @@
   "license": "ISC",
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
+    "@types/amqplib": "^0.10.7",
     "@types/axios": "^0.14.4",
     "@types/dotenv": "^8.2.3",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
+    "amqplib": "^0.10.8",
     "axios": "^1.10.0",
     "concurrently": "^9.1.2",
     "dotenv": "^16.5.0",
