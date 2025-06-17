@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import blogRoutes from "./routes/blog.js";
 import {createClient} from 'redis'
 import { StartCacheConsumer } from "./utils/consumer.js";
+import cors from "cors";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ redisClient
 .catch(console.error);
 
 app.use(express.json());
+app.use(cors());
 
 app.use("/api/v1", blogRoutes);
 
