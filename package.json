@@ -14,9 +14,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
     "@types/dotenv": "^8.2.3",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
+    "concurrently": "^9.1.2",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
