@@ -180,10 +180,10 @@ export const deleteComment = TryCatch(async (req: AuthenticatedRequest, res) => 
 });
 
 export const SaveBlog = TryCatch(async (req: AuthenticatedRequest, res) => {
-  const { blogId } = req.params;
+  const { blogid } = req.params;
   const userId = req.user?._id;
 
-  if (!blogId) {
+  if (!blogid) {
     res.status(400).json({
       status: false,
       message: "Blog ID is required",
@@ -200,16 +200,16 @@ export const SaveBlog = TryCatch(async (req: AuthenticatedRequest, res) => {
   }
 
   const existingBlog = await sql`
-        SELECT * FROM saveblogs WHERE blogid = ${blogId} AND userid = ${userId}
+        SELECT * FROM saveblogs WHERE blogid = ${blogid} AND userid = ${userId}
         `;
   if(existingBlog.length === 0){
-    await sql`INSERT INTO saveblogs (userid, blogid) VALUES (${userId}, ${blogId})`;
+    await sql`INSERT INTO saveblogs (userid, blogid) VALUES (${userId}, ${blogid})`;
     res.json({
       status: true,
       message: "Blog saved successfully",
     });
   }else{
-    await sql`DELETE FROM saveblogs WHERE blogid = ${blogId} AND userid = ${userId}`;
+    await sql`DELETE FROM saveblogs WHERE blogid = ${blogid} AND userid = ${userId}`;
     res.json({
       status: true,
       message: "Blog unsaved successfully",
