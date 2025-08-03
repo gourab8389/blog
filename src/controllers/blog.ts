@@ -179,3 +179,76 @@ export const deleteComment = TryCatch(async (req: AuthenticatedRequest, res) => 
   });
 });
 
+export const SaveBlog = TryCatch(async (req: AuthenticatedRequest, res) => {
+  const { blogId } = req.params;
+  const userId = req.user?._id;
+
+  if (!blogId) {
+    res.status(400).json({
+      status: false,
+      message: "Blog ID is required",
+    });
+    return;
+  }
+
+  if (!userId) {
+    res.status(401).json({
+      status: false,
+      message: "Unauthorized access",
+    });
+    return;
+  }
+
+  const existingBlog = await sql`
+        SELECT * FROM saveblogs WHERE blogid = ${blogId} AND userid = ${userId}
+        `;
+  if(existingBlog.length === 0){
+    await sql`INSERT INTO saveblogs (userid, blogid) VALUES (${userId}, ${blogId})`;
+    res.json({
+      status: true,
+      message: "Blog saved successfully",
+    });
+  }else{
+    await sql`DELETE FROM saveblogs WHERE blogid = ${blogId} AND userid = ${userId}`;
+    res.json({
+      status: true,
+      message: "Blog unsaved successfully",
+    });
+  }
+});
+
+export const GetSavedBlogs = TryCatch(async (req: AuthenticatedRequest, res) => {
+  const userId = req.user?._id;
+
+  if (!userId) {
+    res.status(401).json({
+      status: false,
+      message: "Unauthorized access",
+    });
+    return;
+  }
+
+  const savedBlogs = await sql`
+        SELECT * FROM saveblogs WHERE userid = ${userId}
+        `;
+
+  if (savedBlogs.length === 0) {
+    res.json({
+      status: true,
+      message: "No saved blogs found",
+      blogs: [],
+    });
+    return;
+  }
+
+  const blogIds = savedBlogs.map(blog => blog.blogid);
+  const blogs = await sql`
+        SELECT * FROM blogs WHERE id IN (${blogIds})
+        `;
+
+  res.json({
+    status: true,
+    message: "Saved blogs fetched successfully",
+    blogs,
+  });
+});

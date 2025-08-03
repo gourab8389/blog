@@ -1,5 +1,5 @@
 import express from 'express';
-import { addComment, deleteComment, getAllBlogs, getComments, getSingleBlog } from '../controllers/blog.js';
+import { addComment, deleteComment, getAllBlogs, getComments, GetSavedBlogs, getSingleBlog, SaveBlog } from '../controllers/blog.js';
 import { isAuth } from '../middleware/isAuth.js';
 
 
@@ -10,5 +10,7 @@ router.get("/blog/:id", getSingleBlog);
 router.post("/comment/:id", isAuth, addComment);
 router.get("/comment/:id", getComments);
 router.delete("/comment/:id", isAuth, deleteComment);
+router.post("/save/:blogId", isAuth, SaveBlog);
+router.get("/saved-blogs", isAuth, GetSavedBlogs);
 
 export default router;
