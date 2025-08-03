@@ -1,3 +1,4 @@
+import { AuthenticatedRequest } from "../middleware/isAuth.js";
 import { redisClient } from "../server.js";
 import { sql } from "../utils/db.js";
 import { TryCatch } from "../utils/try-catch.js";
@@ -111,3 +112,70 @@ export const getSingleBlog = TryCatch(async (req, res) => {
     resposeData,
   });
 });
+
+export const addComment = TryCatch(async (req: AuthenticatedRequest, res) => {
+  const { id: blogId } = req.params;
+  const { comment } = req.body;
+
+  if (!comment) {
+    res.status(400).json({
+      status: false,
+      message: "Comment is required",
+    });
+    return;
+  }
+
+  await sql`INSERT INTO comments (comment, blogid, userid, username) VALUES (${comment}, ${blogId}, ${req.user?._id}, ${req.user?.name})
+  RETURNING *`;
+
+  res.json({
+    status: true,
+    message: "Comment added successfully",
+  });
+});
+
+export const getComments = TryCatch(async (req, res) => {
+  const { id } = req.params;
+
+  const comments = await sql`
+        SELECT * FROM comments WHERE blogid = ${id} ORDER BY created_at DESC
+        `;
+
+  res.json({
+    status: true,
+    message: "Comments fetched successfully",
+    comments,
+  });
+});
+
+export const deleteComment = TryCatch(async (req: AuthenticatedRequest, res) => {
+  const { commentId } = req.params;
+
+  if (!req.user) {
+    res.status(401).json({
+      status: false,
+      message: "Unauthorized access",
+    });
+    return;
+  }
+
+  const comment = await sql`
+        SELECT * FROM comments WHERE id = ${commentId} AND userid = ${req.user._id}
+        `;
+
+  if (comment.length === 0) {
+    res.status(404).json({
+      status: false,
+      message: "Comment not found or you are not authorized to delete it",
+    });
+    return;
+  }
+
+  await sql`DELETE FROM comments WHERE id = ${commentId}`;
+
+  res.json({
+    status: true,
+    message: "Comment deleted successfully",
+  });
+});
+
