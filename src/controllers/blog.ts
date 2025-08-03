@@ -149,7 +149,7 @@ export const getComments = TryCatch(async (req, res) => {
 });
 
 export const deleteComment = TryCatch(async (req: AuthenticatedRequest, res) => {
-  const { commentId } = req.params;
+  const { id } = req.params;
 
   if (!req.user) {
     res.status(401).json({
@@ -160,7 +160,7 @@ export const deleteComment = TryCatch(async (req: AuthenticatedRequest, res) => 
   }
 
   const comment = await sql`
-        SELECT * FROM comments WHERE id = ${commentId} AND userid = ${req.user._id}
+        SELECT * FROM comments WHERE id = ${id} AND userid = ${req.user._id}
         `;
 
   if (comment.length === 0) {
@@ -171,7 +171,7 @@ export const deleteComment = TryCatch(async (req: AuthenticatedRequest, res) => 
     return;
   }
 
-  await sql`DELETE FROM comments WHERE id = ${commentId}`;
+  await sql`DELETE FROM comments WHERE id = ${id}`;
 
   res.json({
     status: true,
