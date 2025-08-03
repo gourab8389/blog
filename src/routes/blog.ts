@@ -11,6 +11,6 @@ router.post("/comment/:id", isAuth, addComment);
 router.get("/comment/:id", getComments);
 router.delete("/comment/:id", isAuth, deleteComment);
 router.post("/save/:blogid", isAuth, SaveBlog);
-router.get("/saved-blogs", isAuth, GetSavedBlogs);
+router.get("/blog/saved/all", isAuth, GetSavedBlogs);
 
 export default router;
