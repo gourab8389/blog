@@ -241,10 +241,10 @@ export const GetSavedBlogs = TryCatch(async (req: AuthenticatedRequest, res) => 
     return;
   }
 
-  const blogIds = savedBlogs.map(blog => blog.blogid);
-  const blogs = await sql`
-        SELECT * FROM blogs WHERE id IN (${blogIds})
-        `;
+const blogIds = savedBlogs.map(blog => blog.blogid);
+const blogs = await sql`
+    SELECT * FROM blogs WHERE id = ANY(${blogIds})
+`;
 
   res.json({
     status: true,
